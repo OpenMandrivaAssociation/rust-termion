@@ -1,0 +1,104 @@
+From d80ab4617f79f68b85cc1d113250ad3d791a66d5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jonathan=20Schleu=C3=9Fer?= <ParadoxSpiral@riseup.net>
+Date: Sat, 29 Dec 2018 17:15:18 +0100
+Subject: [PATCH] Update numtoa
+
+This now allows byte slices with lengths different than 20, so
+specific lengths based on the biggest possible value for each
+number can be used.
+---
+ src/color.rs  |  8 ++++----
+ src/cursor.rs | 10 +++++-----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/src/color.rs b/src/color.rs
+index 6c543b69561f..6c0055b5e9e3 100644
+--- a/src/color.rs
++++ b/src/color.rs
+@@ -125,14 +125,14 @@ impl AnsiValue {
+ impl AnsiValue {
+     /// Returns the ANSI sequence as a string.
+     pub fn fg_string(self) -> String {
+-        let mut x = [0u8; 20];
++        let mut x = [0u8; 3];
+         let x = self.0.numtoa_str(10, &mut x);
+         [csi!("38;5;"), x, "m"].concat()
+     }
+ 
+     /// Returns the ANSI sequence as a string.
+     pub fn bg_string(self) -> String {
+-        let mut x = [0u8; 20];
++        let mut x = [0u8; 3];
+         let x = self.0.numtoa_str(10, &mut x);
+         [csi!("48;5;"), x, "m"].concat()
+     }
+@@ -157,7 +157,7 @@ pub struct Rgb(pub u8, pub u8, pub u8);
+ impl Rgb {
+     /// Returns the ANSI sequence as a string.
+     pub fn fg_string(self) -> String {
+-        let (mut x, mut y, mut z) = ([0u8; 20], [0u8; 20], [0u8; 20]);
++        let (mut x, mut y, mut z) = ([0u8; 3], [0u8; 3], [0u8; 3]);
+         let (x, y, z) = (
+             self.0.numtoa_str(10, &mut x),
+             self.1.numtoa_str(10, &mut y),
+@@ -169,7 +169,7 @@ impl Rgb {
+ 
+     /// Returns the ANSI sequence as a string.
+     pub fn bg_string(self) -> String {
+-        let (mut x, mut y, mut z) = ([0u8; 20], [0u8; 20], [0u8; 20]);
++        let (mut x, mut y, mut z) = ([0u8; 3], [0u8; 3], [0u8; 3]);
+         let (x, y, z) = (
+             self.0.numtoa_str(10, &mut x),
+             self.1.numtoa_str(10, &mut y),
+diff --git a/src/cursor.rs b/src/cursor.rs
+index bbc039406746..8596c3f47fab 100644
+--- a/src/cursor.rs
++++ b/src/cursor.rs
+@@ -36,7 +36,7 @@ pub struct Goto(pub u16, pub u16);
+ 
+ impl From<Goto> for String {
+     fn from(this: Goto) -> String {
+-        let (mut x, mut y) = ([0u8; 20], [0u8; 20]);
++        let (mut x, mut y) = ([0u8; 5], [0u8; 5]);
+         ["\x1B[", this.1.numtoa_str(10, &mut x), ";", this.0.numtoa_str(10, &mut y), "H"].concat()
+     }
+ }
+@@ -60,7 +60,7 @@ pub struct Left(pub u16);
+ 
+ impl From<Left> for String {
+     fn from(this: Left) -> String {
+-        let mut buf = [0u8; 20];
++        let mut buf = [0u8; 5];
+         ["\x1B[", this.0.numtoa_str(10, &mut buf), "D"].concat()
+     }
+ }
+@@ -77,7 +77,7 @@ pub struct Right(pub u16);
+ 
+ impl From<Right> for String {
+     fn from(this: Right) -> String {
+-        let mut buf = [0u8; 20];
++        let mut buf = [0u8; 5];
+         ["\x1B[", this.0.numtoa_str(10, &mut buf), "C"].concat()
+     }
+ }
+@@ -94,7 +94,7 @@ pub struct Up(pub u16);
+ 
+ impl From<Up> for String {
+     fn from(this: Up) -> String {
+-        let mut buf = [0u8; 20];
++        let mut buf = [0u8; 5];
+         ["\x1B[", this.0.numtoa_str(10, &mut buf), "A"].concat()
+     }
+ }
+@@ -111,7 +111,7 @@ pub struct Down(pub u16);
+ 
+ impl From<Down> for String {
+     fn from(this: Down) -> String {
+-        let mut buf = [0u8; 20];
++        let mut buf = [0u8; 5];
+         ["\x1B[", this.0.numtoa_str(10, &mut buf), "B"].concat()
+     }
+ }
+-- 
+2.21.0
+

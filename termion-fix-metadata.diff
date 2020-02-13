@@ -1,0 +1,16 @@
+--- termion-1.5.4/Cargo.toml	2019-11-29T16:45:59+00:00
++++ termion-1.5.4/Cargo.toml	2019-12-02T07:20:34.208578+00:00
+@@ -21,12 +21,6 @@
+ license = "MIT"
+ repository = "https://gitlab.redox-os.org/redox-os/termion"
+ [dependencies.numtoa]
+-version = "0.1.0"
+-features = ["std"]
++version = "0.2.3"
+ [target."cfg(not(target_os = \"redox\"))".dependencies.libc]
+ version = "0.2.8"
+-[target."cfg(target_os = \"redox\")".dependencies.redox_syscall]
+-version = "0.1"
+-
+-[target."cfg(target_os = \"redox\")".dependencies.redox_termios]
+-version = "0.1"
